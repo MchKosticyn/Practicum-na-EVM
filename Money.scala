@@ -3,18 +3,16 @@
   */
 object Money {
   def  Count(sum : Int, coins: List[Int]) : Int = {
-    var S = 0
-    if (sum == 0)
-      S = 1
-    if (sum > 0)
-        for (i <- coins)
-          S+=Count(sum - i, coins.filter(_>=i))
-    S
+    if (sum == 0) 1
+    else {
+      if ((sum > 0)&&coins.nonEmpty)
+        Count(sum - coins.head, coins) + Count(sum, coins.tail)
+      else 0
+    }
   }
-
   def main(args: Array[String]): Unit = {
     val S = readLine("Write an acount of money: ").toInt
-    val c : List[Int] = readLine("Write a list ").split(' ').map(_.toInt).toList
+    val c = readLine("Write a list ").split(' ').map(_.toInt).toList
     print(Count(S, c))
   }
 }
