@@ -3,11 +3,10 @@
   */
 object pasc {
 
-  def fac(n : Int) ={
-    var r = 1
-    for (i <- 1 to n)
-      r = r * i
-    r
+  def fac(n : Int) : Int ={
+    if (n<=1)
+      1
+    else n * fac(n-1)
   }
 
   def sochet(i : Int,j : Int) = fac(i)/(fac(j)*fac(i-j))
