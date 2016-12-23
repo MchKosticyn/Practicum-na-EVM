@@ -1,3 +1,5 @@
+import scala.reflect.ClassTag
+
 /**
   * Created by Asus on 21.12.2016.
   */
@@ -90,14 +92,16 @@ object PScan {
     }
   }
 
-  def PrefixScan[T](A: Array[T], Zero: T, f: (T, T) => T, threads: Int): Unit = {
+  def PrefixScan[T: ClassTag](A: Array[T], Zero: T, f: (T, T) => T, threads: Int): Array[T] = {
     scanC(A, f, 0, A.length, threads)
+    val Addit: T = A(A.length - 1)
     A(A.length - 1) = Zero
     scanD(A, f, 0, A.length, threads)
+    A :+ Addit
   }
 
-  val FirstArray = 0 +: scala.io.StdIn.readLine().toCharArray.map(_.toInt.-(48))
-  val SecondArray = 0 +: scala.io.StdIn.readLine().toCharArray.map(_.toInt.-(48))
+  val FirstArray = scala.io.StdIn.readLine().toCharArray.map(_.toInt.-(48))
+  val SecondArray = scala.io.StdIn.readLine().toCharArray.map(_.toInt.-(48))
   var ExtraArray:  Array[Char] = new Array(FirstArray.length)
 
   def OneThreadCompute(A: BigInt, B: BigInt, from: Int, count: Int) =
@@ -150,9 +154,8 @@ object PScan {
 
   def BigSum(A: BigInt, B: BigInt, threads: Int): BigInt = {
     ComputeExtraArray(A, B, 0, A.length, threads)
-    PrefixScan(ExtraArray, 'M', operation, 1)
-    ExtraArray = Shl[Char](ExtraArray)
-    ExtraArray(ExtraArray.length - 1) = 'N'
+    ExtraArray = PrefixScan(ExtraArray, 'M', operation, 1)
+    ExtraArray = ExtraArray.tail
     val FinalA: BigInt = new Array(ExtraArray.length)
     Sum(A, B, Shr(ExtraArray.map(ToArray), 0), FinalA, 0, FinalA.length, threads)
     if (FinalA(FinalA.length - 1) == 0) FinalA.init
@@ -160,8 +163,7 @@ object PScan {
   }
 
   def main(args: Array[String]): Unit = {
-    for (i <- SumWithOneThread(FirstArray, SecondArray))
-      print(i + "  ")
-    //for (i <- BigSum(FirstArray.reverse, SecondArray.reverse, 8).reverse)
+    for (i <- BigSum(FirstArray.reverse, SecondArray.reverse, 8).reverse)
+      print(i + " ")
   }
 }
