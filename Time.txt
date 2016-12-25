@@ -1,0 +1,36 @@
+Radius = 3
+
+{----------------------------------1 THREAD-----------------------------------}
+
+scalameter > Horizontal filter on 1 threads with radius 3 takes 3280.233728 ms
+scalameter > Vertical filter on 1 threads with radius 3 takes 3214.470452 ms
+
+{---------------------------------2 THREADS-----------------------------------}
+
+scalameter > Horizontal filter on 2 threads with radius 3 takes 1846.397269 ms
+scalameter > Vertical filter on 2 threads with radius 3 takes 643.310435 ms
+
+{---------------------------------4 THREADS-----------------------------------}
+
+scalameter > Horizontal filter on 4 threads with radius 3 takes 650.185936 ms
+scalameter > Vertical filter on 4 threads with radius 3 takes 1731.447951 ms
+
+{---------------------------------8 THREADS-----------------------------------}
+
+scalameter > Horizontal filter on 8 threads with radius 3 takes 1110.859852 ms
+scalameter > Vertical filter on 8 threads with radius 3 takes 1091.864775 ms
+
+{--------------------------------16 THREADS-----------------------------------}
+
+scalameter > Horizontal filter on 16 threads with radius 3 takes 1177.645173 ms
+scalameter > Vertical filter on 16 threads with radius 3 takes 2155.159319 ms
+
+{--------------------------------32 THREADS-----------------------------------}
+
+scalameter > Horizontal filter on 32 threads with radius 3 takes 1019.700673 ms
+scalameter > Vertical filter on 32 threads with radius 3 takes 998.361306 ms
+
+{--------------------------------64 THREADS-----------------------------------}
+
+scalameter > Horizontal filter on 64 threads with radius 3 takes 917.813011 ms
+scalameter > Vertical filter on 64 threads with radius 3 takes 892.375199 ms
