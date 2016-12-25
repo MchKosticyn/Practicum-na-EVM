@@ -1,36 +1,43 @@
-Radius = 3
+{--------------Big integers---------------}
 
-{----------------------------------1 THREAD-----------------------------------}
+Sequential time: 0.116787
+Parallel time with 1 threads: 0.3793113000000001
+Parallel time with 2 threads: 1.3357141000000001
+Parallel time with 4 threads: 3.4629790999999996
+Parallel time with 8 threads: 3.8153070999999996
+Parallel time with 16 threads: 3.6192792
+Parallel time with 32 threads: 3.5533381
+Parallel time with 64 threads: 3.7159673
 
-scalameter > Horizontal filter on 1 threads with radius 3 takes 3280.233728 ms
-scalameter > Vertical filter on 1 threads with radius 3 takes 3214.470452 ms
+{--------N-th term of the sequence--------}
 
-{---------------------------------2 THREADS-----------------------------------}
+Sequential time: 0.007569000000000001
+Parallel time with 1 threads: 0.0234344
+Parallel time with 2 threads: 0.029549499999999996
+Parallel time with 4 threads: 0.6433750999999999
+Parallel time with 8 threads: 0.9943342
+Parallel time with 16 threads: 1.1546542
+Parallel time with 32 threads: 2.0490503
+Parallel time with 64 threads: 1.6995879999999999
 
-scalameter > Horizontal filter on 2 threads with radius 3 takes 1846.397269 ms
-scalameter > Vertical filter on 2 threads with radius 3 takes 643.310435 ms
+{-----------------Brackets----------------}
 
-{---------------------------------4 THREADS-----------------------------------}
+Sequential time: 0.0493489
+Parallel time with 1 threads: 0.11464859999999999
+Parallel time with 2 threads: 0.1122541
+Parallel time with 4 threads: 0.8747678999999999
+Parallel time with 8 threads: 3.3475179000000006
+Parallel time with 16 threads: 2.5259051
+Parallel time with 32 threads: 2.3799108
+Parallel time with 64 threads: 3.4265445
 
-scalameter > Horizontal filter on 4 threads with radius 3 takes 650.185936 ms
-scalameter > Vertical filter on 4 threads with radius 3 takes 1731.447951 ms
+{-----------------Turtle------------------}
 
-{---------------------------------8 THREADS-----------------------------------}
-
-scalameter > Horizontal filter on 8 threads with radius 3 takes 1110.859852 ms
-scalameter > Vertical filter on 8 threads with radius 3 takes 1091.864775 ms
-
-{--------------------------------16 THREADS-----------------------------------}
-
-scalameter > Horizontal filter on 16 threads with radius 3 takes 1177.645173 ms
-scalameter > Vertical filter on 16 threads with radius 3 takes 2155.159319 ms
-
-{--------------------------------32 THREADS-----------------------------------}
-
-scalameter > Horizontal filter on 32 threads with radius 3 takes 1019.700673 ms
-scalameter > Vertical filter on 32 threads with radius 3 takes 998.361306 ms
-
-{--------------------------------64 THREADS-----------------------------------}
-
-scalameter > Horizontal filter on 64 threads with radius 3 takes 917.813011 ms
-scalameter > Vertical filter on 64 threads with radius 3 takes 892.375199 ms
+Sequential time: 92.8178892
+Parallel time with 1 threads: 202.146722
+Parallel time with 2 threads: 195.38908039999998
+Parallel time with 4 threads: 182.54360029999998
+Parallel time with 8 threads: 113.7657909
+Parallel time with 16 threads: 82.1243908
+Parallel time with 32 threads: 91.2229857
+Parallel time with 64 threads: 99.76163679999999
