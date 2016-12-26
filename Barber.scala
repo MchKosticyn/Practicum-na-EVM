@@ -4,7 +4,7 @@
 package BarberShopP
 
 import java.io.{File, PrintWriter}
-
+import java.util.concurrent.CountDownLatch
 import scala.util.Random
 
 object BarberShop {
@@ -18,7 +18,7 @@ object BarberShop {
       file.close()
     }
 
-    def write(msg: String): Unit = {
+    def write(msg: String): Unit = lock.synchronized {
       file.write(msg + '\n')
     }
   }
@@ -28,51 +28,55 @@ object BarberShop {
 
     var Divan: Array[Int] = new Array(max)
 
+    def init_() = (0 until Divan.length) foreach (Divan(_) = -2)
+
+
     @volatile var Tail = 0
     @volatile var Head = 0
     @volatile var Count = 0
 
+    @volatile var IsEmpty = true
+    //def IsEmpty = lock.synchronized((Head == Tail) && (Count == 0))
 
-    def IsEmpty = (Head == Tail) && (Count == 0)
-
-    def IsFull = (Head == Tail) && (Count > 0)
+    def IsFull = lock.synchronized((Head == Tail) && (Count > 0))
 
     val EmptySofa: Array[Int] = Array(-1)
 
-    def Add(Id: Int) = {
-      lock.synchronized {
-        if (IsFull) EmptySofa
-        else {
-          Tail += 1
-          if (Tail >= max) Tail = 0
-          Divan(Tail) = Id
-          Count += 1
-        }
+    def Add(Id: Int) = lock.synchronized {
+      if (IsFull) EmptySofa
+      else {
+        if (Tail + 1 >= max)
+          Divan(0) = Id
+        else Divan(Tail + 1) = Id
+        Tail += 1
+        if (Tail >= max) Tail = 0
+        Count += 1
+        IsEmpty = (Head == Tail) && (Count == 0)
       }
     }
 
-    def Recieve: Int =
-      lock.synchronized {
-        if (IsEmpty)
-          -1
-        else {
-          val t = Divan(Head)
-          Head += 1
-          if (Head >= max) Head = 0
-          Count -= 1
-          t
-        }
+    def Recieve: Int = lock.synchronized {
+      if (IsEmpty)
+        -1
+      else {
+        Count -= 1
+        Head += 1
+        if (Head >= max) Head = 0
+        val t = Divan(Head)
+        IsEmpty = (Head == Tail) && (Count == 0)
+        t
       }
+    }
 
   }
-
+  @volatile var WasWorked = 0
   @volatile var VisitorCount = 0
+  @volatile var Flag = 0
 
   def WaitTillTheEnd() =
-    while (VisitorCount > 0) {}
+    while (TakeVol(WasWorked) < visitors) {}
 
-  def GenVisit(M: Int, SofaS: Sofa, log: Logger) = {
-    VisitorCount = M
+  def GenVisit(M: Int, SofaS: Sofa, log: Logger) = lock.synchronized {
     var S = 0
     val r = new Random
     for (i <- 0 until M) {
@@ -86,14 +90,20 @@ object BarberShop {
     x
   }
 
+  def TakeVol(x: Int): Int = lock.synchronized {
+    x
+  }
+
   class Barber(Id: Int, D: Sofa, log: Logger) {
     var VID = -1
     val me = new Thread {
       override def run(): Unit =
-        while (VisitorCount > 0) {
+        while (TakeVol(VisitorCount) > 0) {
           while (TakeVisitor(D, log)) {}
           Thread.sleep(300)
           Work(D, log)
+          /*if (TakeVol(VisitorCount) == 0)
+            Flag = SetVol(1)*/
         }
     }
 
@@ -101,14 +111,15 @@ object BarberShop {
       if (!D.IsEmpty) {
         VisitorCount = SetVol(VisitorCount - 1)
         VID = D.Recieve
-        log.write("Barber " + Id + " take " + VID)
+        log.write(Id + " deq " + VID)
         false
       }
       else true
     }
 
     def Work(D: Sofa, log: Logger) = lock.synchronized {
-      log.write("Barber " + Id + " done " + VID)
+      log.write(Id + " done " + VID)
+      WasWorked = SetVol(WasWorked + 1)
     }
   }
 
@@ -118,12 +129,13 @@ object BarberShop {
         Thread.sleep(SleepTime)
         lock.synchronized {
           if (D.IsFull) {
-            log.write("Visitor " + Id + " go back")
-            VisitorCount -= 1
+            log.write(Id + " back")
+            VisitorCount = SetVol(VisitorCount - 1)
+            WasWorked = SetVol(WasWorked + 1)
           }
           else {
             D.Add(Id)
-            log.write("Visitor " + Id + " at sofa ")
+            log.write("Enq " + Id)
           }
         }
       }
@@ -149,6 +161,9 @@ object BarberShop {
 
     val log = new Logger("log.txt")
     val sf = new Sofa(size)
+    sf.init_()
+
+    VisitorCount = SetVol(visitors)
 
     for (i <- 1 to barbers) {
       val Brbr = new Barber(i, sf, log)
@@ -156,12 +171,13 @@ object BarberShop {
     }
     GenVisit(visitors, sf, log)
 
-
     WaitTillTheEnd()
 
     log.close()
 
-    new CheckLog(visitors, barbers, size).main()
+    CheckLog.StartCheck(visitors, barbers, size)
+
+    //new CheckLog(visitors, barbers, size).main()
   }
 
 }
